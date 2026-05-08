@@ -114,3 +114,25 @@ Java_ma_ensa_mobile_jnibridge_MainActivity_nativeSumValues(
 
     return static_cast<jint>(total);
 }
+extern "C"
+JNIEXPORT jlong JNICALL
+Java_ma_ensa_mobile_jnibridge_MainActivity_nativeBenchmarkLoop(
+        JNIEnv *env,
+        jobject /* activity */,
+        jint rounds) {
+
+    if (rounds <= 0) {
+        LOG_ERROR("Benchmark refuse : rounds invalide = %d", rounds);
+        return -1;
+    }
+
+    long long total = 0;
+
+    for (int i = 1; i <= rounds; i++) {
+        total += i;
+    }
+
+    LOG_INFO("Benchmark natif termine avec total = %lld", total);
+
+    return static_cast<jlong>(total);
+}

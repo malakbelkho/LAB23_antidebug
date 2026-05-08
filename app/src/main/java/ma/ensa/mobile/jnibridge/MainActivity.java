@@ -16,19 +16,23 @@ public class MainActivity extends Activity {
     private TextView txtFactorialResult;
     private TextView txtReverseResult;
     private TextView txtArrayResult;
+    private TextView txtBenchmarkResult;
 
     private EditText inputFactorial;
     private EditText inputText;
     private EditText inputNumbers;
+    private EditText inputBenchmarkRounds;
 
     private Button btnFactorial;
     private Button btnReverse;
     private Button btnArray;
+    private Button btnBenchmark;
 
     private native String nativeGreeting();
     private native int nativeFactorialSafe(int number);
     private native String nativeMirrorText(String text);
     private native int nativeSumValues(int[] values);
+    private native long nativeBenchmarkLoop(int rounds);
 
     static {
         System.loadLibrary("secure_bridge");
@@ -51,6 +55,7 @@ public class MainActivity extends Activity {
         txtFactorialResult = findViewById(R.id.txtFactorialResult);
         txtReverseResult = findViewById(R.id.txtReverseResult);
         txtArrayResult = findViewById(R.id.txtArrayResult);
+        txtBenchmarkResult = findViewById(R.id.txtBenchmarkResult);
 
         inputFactorial = findViewById(R.id.inputFactorial);
         inputText = findViewById(R.id.inputText);
@@ -59,6 +64,8 @@ public class MainActivity extends Activity {
         btnFactorial = findViewById(R.id.btnFactorial);
         btnReverse = findViewById(R.id.btnReverse);
         btnArray = findViewById(R.id.btnArray);
+        btnBenchmark = findViewById(R.id.btnBenchmark);
+        inputBenchmarkRounds = findViewById(R.id.inputBenchmarkRounds);
     }
 
     private void prepareDefaultContent() {
@@ -71,12 +78,15 @@ public class MainActivity extends Activity {
         runFactorialDemo();
         runReverseDemo();
         runArrayDemo();
+        inputBenchmarkRounds.setText("5000000");
+        txtBenchmarkResult.setText("Clique sur le bouton pour comparer Java et C++.");
     }
 
     private void configureActions() {
         btnFactorial.setOnClickListener(view -> runFactorialDemo());
         btnReverse.setOnClickListener(view -> runReverseDemo());
         btnArray.setOnClickListener(view -> runArrayDemo());
+        btnBenchmark.setOnClickListener(view -> runBenchmarkDemo());
     }
 
     private void runFactorialDemo() {
@@ -154,6 +164,57 @@ public class MainActivity extends Activity {
         }
 
         return finalArray;
+    }
+
+    private long javaBenchmarkLoop(int rounds) {
+        long total = 0;
+
+        for (int i = 1; i <= rounds; i++) {
+            total += i;
+        }
+
+        return total;
+    }
+
+    private void runBenchmarkDemo() {
+        try {
+            String rawRounds = inputBenchmarkRounds.getText().toString().trim();
+
+            if (rawRounds.isEmpty()) {
+                showMessage("Veuillez saisir un nombre d’itérations.");
+                return;
+            }
+
+            int rounds = Integer.parseInt(rawRounds);
+
+            if (rounds <= 0) {
+                showMessage("Le nombre d’itérations doit être positif.");
+                return;
+            }
+
+            long javaStart = System.nanoTime();
+            long javaResult = javaBenchmarkLoop(rounds);
+            long javaEnd = System.nanoTime();
+
+            long nativeStart = System.nanoTime();
+            long nativeResult = nativeBenchmarkLoop(rounds);
+            long nativeEnd = System.nanoTime();
+
+            double javaDurationMs = (javaEnd - javaStart) / 1_000_000.0;
+            double nativeDurationMs = (nativeEnd - nativeStart) / 1_000_000.0;
+
+            String result =
+                    "Calcul : somme de 1 à " + rounds +
+                            "\nRésultat Java : " + javaResult +
+                            "\nTemps Java : " + String.format("%.3f", javaDurationMs) + " ms" +
+                            "\nRésultat C++ : " + nativeResult +
+                            "\nTemps C++ : " + String.format("%.3f", nativeDurationMs) + " ms";
+
+            txtBenchmarkResult.setText(result);
+
+        } catch (NumberFormatException exception) {
+            showMessage("Le benchmark doit recevoir un entier valide.");
+        }
     }
 
     private void showMessage(String message) {
