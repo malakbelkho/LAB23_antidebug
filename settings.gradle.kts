@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "JNIDemo"
+rootProject.name = "AntiDebug"
 include(":app")

@@ -1,10 +1,12 @@
 package ma.ensa.mobile.jnibridge;
 
+
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,6 +14,10 @@ import java.util.ArrayList;
 
 public class MainActivity extends Activity {
 
+    private LinearLayout cardSecurityStatus;
+
+    private TextView txtSecurityTitle;
+    private TextView txtSecurityDetails;
     private TextView txtNativeHello;
     private TextView txtFactorialResult;
     private TextView txtReverseResult;
@@ -23,10 +29,17 @@ public class MainActivity extends Activity {
     private EditText inputNumbers;
     private EditText inputBenchmarkRounds;
 
+    private Button btnSecurityScan;
     private Button btnFactorial;
     private Button btnReverse;
     private Button btnArray;
     private Button btnBenchmark;
+
+    private boolean nativeAccessAllowed = false;
+
+    private native boolean isDebugDetected();
+    private native int nativeSecurityCode();
+    private native String nativeSecuritySummary();
 
     private native String nativeGreeting();
     private native int nativeFactorialSafe(int number);
@@ -48,9 +61,14 @@ public class MainActivity extends Activity {
         bindViews();
         prepareDefaultContent();
         configureActions();
+        runSecurityScan();
     }
 
     private void bindViews() {
+        cardSecurityStatus = findViewById(R.id.cardSecurityStatus);
+
+        txtSecurityTitle = findViewById(R.id.txtSecurityTitle);
+        txtSecurityDetails = findViewById(R.id.txtSecurityDetails);
         txtNativeHello = findViewById(R.id.txtNativeHello);
         txtFactorialResult = findViewById(R.id.txtFactorialResult);
         txtReverseResult = findViewById(R.id.txtReverseResult);
@@ -60,36 +78,100 @@ public class MainActivity extends Activity {
         inputFactorial = findViewById(R.id.inputFactorial);
         inputText = findViewById(R.id.inputText);
         inputNumbers = findViewById(R.id.inputNumbers);
+        inputBenchmarkRounds = findViewById(R.id.inputBenchmarkRounds);
 
+        btnSecurityScan = findViewById(R.id.btnSecurityScan);
         btnFactorial = findViewById(R.id.btnFactorial);
         btnReverse = findViewById(R.id.btnReverse);
         btnArray = findViewById(R.id.btnArray);
         btnBenchmark = findViewById(R.id.btnBenchmark);
-        inputBenchmarkRounds = findViewById(R.id.inputBenchmarkRounds);
     }
 
     private void prepareDefaultContent() {
-        txtNativeHello.setText(nativeGreeting());
-
         inputFactorial.setText("10");
-        inputText.setText("JNI is powerful");
+        inputText.setText("JNI Anti Debug");
         inputNumbers.setText("10, 20, 30, 40, 50");
-
-        runFactorialDemo();
-        runReverseDemo();
-        runArrayDemo();
         inputBenchmarkRounds.setText("5000000");
-        txtBenchmarkResult.setText("Clique sur le bouton pour comparer Java et C++.");
+
+        txtNativeHello.setText("Analyse native en cours...");
+        txtFactorialResult.setText("En attente de validation de sécurité.");
+        txtReverseResult.setText("En attente de validation de sécurité.");
+        txtArrayResult.setText("En attente de validation de sécurité.");
+        txtBenchmarkResult.setText("En attente de validation de sécurité.");
     }
 
     private void configureActions() {
+        btnSecurityScan.setOnClickListener(view -> runSecurityScan());
         btnFactorial.setOnClickListener(view -> runFactorialDemo());
         btnReverse.setOnClickListener(view -> runReverseDemo());
         btnArray.setOnClickListener(view -> runArrayDemo());
         btnBenchmark.setOnClickListener(view -> runBenchmarkDemo());
     }
 
+    private void runSecurityScan() {
+        int securityCode = nativeSecurityCode();
+        String nativeSummary = nativeSecuritySummary();
+
+        nativeAccessAllowed = securityCode == 0;
+
+        if (nativeAccessAllowed) {
+            cardSecurityStatus.setBackgroundResource(R.drawable.bg_security_safe);
+            txtSecurityTitle.setText("État sécurité : environnement fiable");
+            txtSecurityTitle.setTextColor(Color.parseColor("#14532D"));
+            txtSecurityDetails.setText("Code natif : 0\n" + nativeSummary + "\nLes fonctions natives sensibles sont autorisées.");
+
+            applyNativeActionState(true);
+
+            txtNativeHello.setText(nativeGreeting());
+            runFactorialDemo();
+            runReverseDemo();
+            runArrayDemo();
+            txtBenchmarkResult.setText("Clique sur le bouton pour comparer Java et C++.");
+
+        } else {
+            cardSecurityStatus.setBackgroundResource(R.drawable.bg_security_alert);
+            txtSecurityTitle.setText("État sécurité : environnement suspect");
+            txtSecurityTitle.setTextColor(Color.parseColor("#7F1D1D"));
+            txtSecurityDetails.setText("Code natif : " + securityCode + "\n" + nativeSummary + "\nMode restreint activé.");
+
+            applyNativeActionState(false);
+
+            txtNativeHello.setText("Fonction native sensible désactivée.");
+            txtFactorialResult.setText("Calcul natif bloqué par la couche anti-debug.");
+            txtReverseResult.setText("Inversion native bloquée par la couche anti-debug.");
+            txtArrayResult.setText("Traitement du tableau bloqué par la couche anti-debug.");
+            txtBenchmarkResult.setText("Benchmark bloqué par la couche anti-debug.");
+        }
+    }
+
+    private void applyNativeActionState(boolean enabled) {
+        btnFactorial.setEnabled(enabled);
+        btnReverse.setEnabled(enabled);
+        btnArray.setEnabled(enabled);
+        btnBenchmark.setEnabled(enabled);
+
+        float alpha = enabled ? 1.0f : 0.45f;
+
+        btnFactorial.setAlpha(alpha);
+        btnReverse.setAlpha(alpha);
+        btnArray.setAlpha(alpha);
+        btnBenchmark.setAlpha(alpha);
+    }
+
+    private boolean ensureNativeAccessAllowed() {
+        if (!nativeAccessAllowed) {
+            showMessage("Action bloquée : environnement suspect détecté.");
+            return false;
+        }
+
+        return true;
+    }
+
     private void runFactorialDemo() {
+        if (!ensureNativeAccessAllowed()) {
+            return;
+        }
+
         try {
             String rawValue = inputFactorial.getText().toString().trim();
 
@@ -104,9 +186,9 @@ public class MainActivity extends Activity {
             if (nativeResult >= 0) {
                 txtFactorialResult.setText("Résultat natif : " + number + "! = " + nativeResult);
             } else if (nativeResult == -1) {
-                txtFactorialResult.setText("Erreur native -1 : le factoriel d’un nombre négatif est refusé.");
+                txtFactorialResult.setText("Erreur native -1 : nombre négatif refusé.");
             } else if (nativeResult == -2) {
-                txtFactorialResult.setText("Erreur native -2 : dépassement de la limite int détecté.");
+                txtFactorialResult.setText("Erreur native -2 : dépassement de la limite int.");
             } else {
                 txtFactorialResult.setText("Erreur native inconnue : " + nativeResult);
             }
@@ -117,6 +199,10 @@ public class MainActivity extends Activity {
     }
 
     private void runReverseDemo() {
+        if (!ensureNativeAccessAllowed()) {
+            return;
+        }
+
         String originalText = inputText.getText().toString();
         String reversedText = nativeMirrorText(originalText);
 
@@ -124,6 +210,10 @@ public class MainActivity extends Activity {
     }
 
     private void runArrayDemo() {
+        if (!ensureNativeAccessAllowed()) {
+            return;
+        }
+
         try {
             int[] parsedNumbers = parseNumbersFromInput();
             int nativeSum = nativeSumValues(parsedNumbers);
@@ -177,6 +267,10 @@ public class MainActivity extends Activity {
     }
 
     private void runBenchmarkDemo() {
+        if (!ensureNativeAccessAllowed()) {
+            return;
+        }
+
         try {
             String rawRounds = inputBenchmarkRounds.getText().toString().trim();
 

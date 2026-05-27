@@ -41,4 +41,19 @@
     <color name="jni_chip_bg">#E0F2FE</color>
     <color name="jni_chip_text">#075985</color>
 
+    <!-- LAB 23 Anti-debug colors -->
+    <color name="guard_safe_bg">#DCFCE7</color>
+    <color name="guard_safe_border">#22C55E</color>
+    <color name="guard_safe_text">#14532D</color>
+
+    <color name="guard_alert_bg">#FEE2E2</color>
+    <color name="guard_alert_border">#EF4444</color>
+    <color name="guard_alert_text">#7F1D1D</color>
+
+    <color name="guard_neutral_bg">#E0F2FE</color>
+    <color name="guard_neutral_border">#38BDF8</color>
+    <color name="guard_neutral_text">#075985</color>
+
+    <color name="guard_scan_start">#6366F1</color>
+    <color name="guard_scan_end">#14B8A6</color>
 </resources>

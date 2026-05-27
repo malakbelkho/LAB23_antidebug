@@ -27,7 +27,7 @@
                 android:paddingTop="6dp"
                 android:paddingRight="14dp"
                 android:paddingBottom="6dp"
-                android:text="LAB 22 • JNI / NDK / C++"
+                android:text="LAB 23 • JNI Anti-Debug"
                 android:textColor="@color/jni_chip_text"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
-                android:text="Native Bridge Studio"
+                android:text="Native Guard Console"
                 android:textColor="@color/jni_white"
                 android:textSize="31sp"
                 android:textStyle="bold" />
@@ -45,24 +45,67 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Une application Android Java qui communique avec un moteur C++ via JNI."
+                android:text="Démonstration JNI avec contrôle anti-debug natif et blocage logique des fonctions sensibles."
                 android:textColor="@color/jni_soft_white"
                 android:textSize="15sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cardSecurityStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_security_neutral"
+            android:elevation="8dp"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/txtSecurityTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Analyse de sécurité en attente"
+                android:textColor="@color/guard_neutral_text"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtSecurityDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Clique sur le bouton pour exécuter les contrôles natifs."
+                android:textColor="@color/jni_text_dark"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/btnSecurityScan"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_guard_scan_button"
+                android:backgroundTint="@null"
+                android:text="Relancer l’analyse native"
+                android:textAllCaps="false"
+                android:textColor="@color/jni_white"
+                android:textSize="15sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/txtNativeHello"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="18dp"
             android:background="@drawable/bg_jni_result"
             android:elevation="6dp"
             android:padding="18dp"
-            android:text="Connexion native..."
+            android:text="Zone native..."
             android:textColor="@color/jni_text_dark"
             android:textSize="16sp"
             android:textStyle="bold" />
 
+        <!-- Factoriel -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -75,18 +118,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="01  Factoriel sécurisé"
+                android:text="01  Fonction protégée : factoriel"
                 android:textColor="@color/jni_title"
                 android:textSize="20sp"
                 android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="Le nombre est envoyé depuis Java vers C++, puis le résultat est renvoyé vers l’interface."
-                android:textColor="@color/jni_muted"
-                android:textSize="14sp" />
 
             <EditText
                 android:id="@+id/inputFactorial"
@@ -109,10 +144,9 @@
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_jni_button"
                 android:backgroundTint="@null"
-                android:text="Calculer avec C++"
+                android:text="Calculer côté C++"
                 android:textAllCaps="false"
                 android:textColor="@color/jni_white"
-                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -127,6 +161,7 @@
                 android:textSize="15sp" />
         </LinearLayout>
 
+        <!-- Inversion texte -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -139,7 +174,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="02  Inversion de texte"
+                android:text="02  Texte envoyé vers le natif"
                 android:textColor="@color/jni_title"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -165,10 +200,9 @@
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_jni_button_alt"
                 android:backgroundTint="@null"
-                android:text="Inverser côté natif"
+                android:text="Inverser avec C++"
                 android:textAllCaps="false"
                 android:textColor="@color/jni_white"
-                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -183,11 +217,11 @@
                 android:textSize="15sp" />
         </LinearLayout>
 
+        <!-- Tableau -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:layout_marginBottom="24dp"
             android:background="@drawable/bg_jni_card"
             android:elevation="8dp"
             android:orientation="vertical"
@@ -196,18 +230,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="03  Tableau d’entiers"
+                android:text="03  Tableau traité en C++"
                 android:textColor="@color/jni_title"
                 android:textSize="20sp"
                 android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="Les valeurs sont transformées en int[] Java, puis traitées par la fonction native C++."
-                android:textColor="@color/jni_muted"
-                android:textSize="14sp" />
 
             <EditText
                 android:id="@+id/inputNumbers"
@@ -230,10 +256,9 @@
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_jni_button"
                 android:backgroundTint="@null"
-                android:text="Sommer le tableau en C++"
+                android:text="Sommer côté natif"
                 android:textAllCaps="false"
                 android:textColor="@color/jni_white"
-                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -248,6 +273,7 @@
                 android:textSize="15sp" />
         </LinearLayout>
 
+        <!-- Benchmark -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -261,18 +287,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="04  Benchmark Java vs C++"
+                android:text="04  Benchmark protégé Java vs C++"
                 android:textColor="@color/jni_title"
                 android:textSize="20sp"
                 android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="Comparaison du temps d’exécution d’un calcul répétitif côté Java et côté natif C++."
-                android:textColor="@color/jni_muted"
-                android:textSize="14sp" />
 
             <EditText
                 android:id="@+id/inputBenchmarkRounds"
@@ -280,7 +298,7 @@
                 android:layout_height="52dp"
                 android:layout_marginTop="14dp"
                 android:background="@drawable/bg_jni_input"
-                android:hint="Nombre d’itérations : exemple 5000000"
+                android:hint="Nombre d’itérations : 5000000"
                 android:inputType="number"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
@@ -295,10 +313,9 @@
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_jni_button_alt"
                 android:backgroundTint="@null"
-                android:text="Lancer le benchmark"
+                android:text="Comparer Java et C++"
                 android:textAllCaps="false"
                 android:textColor="@color/jni_white"
-                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -308,9 +325,10 @@
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_jni_result"
                 android:padding="14dp"
-                android:text="Résultat du benchmark"
+                android:text="Résultat benchmark"
                 android:textColor="@color/jni_text_dark"
                 android:textSize="15sp" />
         </LinearLayout>
+
     </LinearLayout>
 </ScrollView>
